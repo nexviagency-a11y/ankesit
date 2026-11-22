@@ -1,0 +1,485 @@
+
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ankesit — Gündemi Yakala. Olanı Anla.</title>
+<style>
+:root {
+  font-family: Arial, sans-serif;
+  --bg:#f5f7fa;
+  --card:#fff;
+  --ink:#172235;
+  --muted:#738094;
+  --line:#e2e7ed;
+  --accent:#e94845;
+}
+* { box-sizing:border-box }
+body { margin:0;background:var(--bg);color:var(--ink) }
+body.dark {
+  --bg:#0f1622;
+  --card:#1a2533;
+  --ink:#f0f5fa;
+  --muted:#a2b0c3;
+  --line:#2c394b;
+}
+button,input { font:inherit }
+button { cursor:pointer }
+.top {
+  background:#17263b;color:white;
+  padding:12px 5%;font-size:12px;
+}
+nav {
+  display:flex;justify-content:space-between;
+  align-items:center;gap:15px;flex-wrap:wrap;
+  background:var(--card);
+  padding:18px 5%;
+  border-bottom:1px solid var(--line);
+}
+.logo { font-size:29px;font-weight:900;letter-spacing:-1px }
+.logo span { color:var(--accent) }
+.controls { display:flex;gap:8px }
+.controls button {
+  background:var(--card);color:var(--ink);
+  border:1px solid var(--line);
+  border-radius:8px;padding:9px 12px;
+}
+main { max-width:1180px;margin:auto;padding:30px 20px }
+.hero-title { padding:20px 0 30px }
+.hero-title small {
+  color:var(--accent);font-weight:bold;letter-spacing:2px;
+}
+.hero-title h1 {
+  font-size:clamp(34px,6vw,58px);
+  line-height:1.12;margin:12px 0;
+  letter-spacing:-2px;
+}
+.hero-title h1 em { color:var(--accent);font-style:normal }
+.hero-title p { color:var(--muted);line-height:1.7 }
+.categories {
+  display:flex;gap:8px;overflow-x:auto;
+  padding:15px 0 25px;
+}
+.categories button {
+  white-space:nowrap;padding:11px 15px;
+  border:1px solid var(--line);
+  border-radius:9px;background:var(--card);
+  color:var(--ink);
+}
+.categories button.active {
+  background:var(--ink);color:var(--card);
+}
+#search {
+  width:100%;padding:13px;border-radius:9px;
+  border:1px solid var(--line);
+  background:var(--card);color:var(--ink);
+  margin-bottom:20px;
+}
+.status {
+  background:var(--card);border:1px solid var(--line);
+  padding:13px;border-radius:9px;
+  color:var(--muted);font-size:13px;margin-bottom:20px;
+}
+.featured {
+  display:grid;grid-template-columns:1.4fr 1fr;
+  gap:16px;margin-bottom:35px;
+}
+.feature {
+  position:relative;min-height:300px;
+  background:#223850;border-radius:14px;
+  overflow:hidden;cursor:pointer;color:white;
+  display:flex;align-items:flex-end;
+}
+.feature img {
+  position:absolute;width:100%;height:100%;
+  object-fit:cover;inset:0;
+}
+.feature::after {
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(transparent,#07111fee);
+}
+.feature .info {
+  position:relative;z-index:1;padding:22px;
+}
+.feature h2 { font-size:clamp(18px,3vw,26px) }
+.feature p { color:#d3dce9;font-size:13px }
+.category-name {
+  color:var(--accent);font-size:11px;
+  font-weight:800;text-transform:uppercase;
+}
+.feature .category-name { color:#ff8178 }
+.cards {
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:17px;
+}
+.card {
+  background:var(--card);border:1px solid var(--line);
+  border-radius:13px;overflow:hidden;
+  cursor:pointer;
+}
+.card:hover { transform:translateY(-2px) }
+.card.read { filter:grayscale(1);opacity:.55 }
+.card img {
+  width:100%;height:175px;object-fit:cover;
+  background:#29405b;display:block;
+}
+.content { padding:17px }
+.content h3 { font-size:16px;line-height:1.4 }
+.content p {
+  font-size:12px;color:var(--muted);
+  line-height:1.6;
+}
+.meta {
+  font-size:11px;color:var(--muted);
+  border-top:1px solid var(--line);
+  padding-top:12px;margin-top:15px;
+}
+.no-image {
+  background:linear-gradient(125deg,#223953,#456a89);
+  color:#fff;display:grid;place-items:center;
+  text-align:center;padding:15px;
+  min-height:175px;
+}
+.feature .no-image {
+  position:absolute;inset:0;height:100%;
+}
+dialog {
+  width:min(720px,95vw);max-height:90vh;
+  border:0;border-radius:15px;
+  padding:0;background:var(--card);color:var(--ink);
+}
+dialog::backdrop { background:#091522bb }
+dialog img { width:100%;max-height:350px;object-fit:cover }
+.dialog-body { padding:25px;line-height:1.75 }
+.dialog-body a,.dialog-body button {
+  display:inline-block;background:var(--accent);
+  color:white;border:0;border-radius:8px;
+  padding:11px 15px;margin:5px;
+  text-decoration:none;cursor:pointer;
+}
+footer {
+  background:#17263b;color:white;
+  padding:25px 5%;margin-top:50px;
+}
+@media(max-width:750px) {
+  .featured { grid-template-columns:1fr }
+  .cards { grid-template-columns:repeat(2,1fr) }
+}
+@media(max-width:450px) {
+  .cards { grid-template-columns:1fr }
+}
+</style>
+</head>
+<body>
+
+<div class="top">● ANKESİT — REKLAMSIZ HABER AKIŞI</div>
+
+<nav>
+  <div class="logo">an<span>kesit.</span></div>
+  <div class="controls">
+    <button id="searchButton">⌕ Ara</button>
+    <button id="themeButton">◐ Tema</button>
+  </div>
+</nav>
+
+<main>
+  <section class="hero-title">
+    <small>DAHA AZ GÜRÜLTÜ. DAHA FAZLA GÜNDEM.</small>
+    <h1>Gündemi <em>Yakala.</em><br>Olanı <em>Anla.</em></h1>
+    <p>Türkiye ve dünyadan önemli gelişmeler, güvenilir kaynaklar ve kısa açıklamalarla tek yerde.</p>
+  </section>
+
+  <h2>Bugün neler oluyor<span style="color:#e94845">?</span></h2>
+
+  <div class="categories" id="categories"></div>
+
+  <input id="search" placeholder="Haberlerde ara..." hidden>
+
+  <div id="status" class="status">Haberler yükleniyor...</div>
+
+  <div id="featured" class="featured"></div>
+
+  <h2>Son gelişmeler</h2>
+  <div id="cards" class="cards"></div>
+</main>
+
+<footer>
+  <strong>ankesit.</strong>
+  <p>Gündemi Yakala. Olanı Anla.</p>
+</footer>
+
+<dialog id="articleDialog">
+  <div id="articleContent"></div>
+</dialog>
+
+<script>
+const API_URL =
+  "https://ankesit-haber-api-test.kenestyle01.workers.dev/news";
+
+const categories = [
+  "Tümü","Türkiye","Dünya","Ekonomi","Siyaset",
+  "Afet","Bilim","Teknoloji","Finans","Yaşam","Spor"
+];
+
+let articles = [];
+let selectedCategory = "Tümü";
+let searchTerm = "";
+
+const readKey = "ankesit-read-news";
+let readArticles = new Set();
+
+try {
+  readArticles = new Set(
+    JSON.parse(localStorage.getItem(readKey) || "[]")
+  );
+} catch {}
+
+const $ = id => document.getElementById(id);
+
+function formatDate(value) {
+  if (!value) return "Tarih belirtilmemiş";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "Tarih belirtilmemiş";
+  return d.toLocaleString("tr-TR", {
+    dateStyle:"medium",timeStyle:"short",
+    timeZone:"Europe/Istanbul"
+  });
+}
+
+function makeImage(article) {
+  if (!article.image ||
+      !/^https:\/\//i.test(article.image)) {
+    const div = document.createElement("div");
+    div.className = "no-image";
+    div.textContent = article.category + " · Görsel bulunmuyor";
+    return div;
+  }
+
+  const img = document.createElement("img");
+  img.src = article.image;
+  img.alt = article.title;
+  img.loading = "lazy";
+  img.referrerPolicy = "no-referrer";
+
+  img.onerror = () => {
+    const div = document.createElement("div");
+    div.className = "no-image";
+    div.textContent = "Görsel yüklenemedi";
+    img.replaceWith(div);
+  };
+
+  return img;
+}
+
+function node(tag, className, text) {
+  const el = document.createElement(tag);
+  if (className) el.className = className;
+  if (text !== undefined) el.textContent = text;
+  return el;
+}
+
+function openArticle(article) {
+  readArticles.add(article.id);
+
+  try {
+    localStorage.setItem(
+      readKey,
+      JSON.stringify([...readArticles].slice(-500))
+    );
+  } catch {}
+
+  const container = $("articleContent");
+  container.replaceChildren();
+
+  container.append(makeImage(article));
+
+  const body = node("div","dialog-body");
+  body.append(node("small","category-name",article.category));
+  body.append(node("h2","",article.title));
+  body.append(node("p","",article.description ||
+    "Bu haber için kısa açıklama bulunmuyor."));
+
+  body.append(node("p","",
+    "Bu açıklama kaynak RSS akışından alınmıştır. " +
+    "Haberin tamamı için orijinal kaynağı ziyaret edebilirsiniz."
+  ));
+
+  const link = document.createElement("a");
+  link.href = article.url;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.textContent = "Orijinal haberi aç";
+  body.append(link);
+
+  const close = node("button","","Haberlere dön");
+  close.onclick = () => $("articleDialog").close();
+  body.append(close);
+
+  container.append(body);
+  $("articleDialog").showModal();
+  render();
+}
+
+function makeCard(article, featured=false) {
+  const card = node(
+    "article",
+    featured ? "feature" :
+    "card" + (readArticles.has(article.id) ? " read" : "")
+  );
+
+  card.tabIndex = 0;
+  card.setAttribute("role","button");
+  card.append(makeImage(article));
+
+  const body = node("div", featured ? "info" : "content");
+  body.append(node("span","category-name",article.category));
+  body.append(node(featured ? "h2" : "h3","",article.title));
+
+  if (article.description) {
+    body.append(node("p","",article.description.slice(0,190)));
+  }
+
+  body.append(node("div","meta",
+    (readArticles.has(article.id) ? "✓ Okundu · " : "") +
+    (article.source || "") + " · " + formatDate(article.publishedAt)
+  ));
+
+  card.append(body);
+  card.onclick = () => openArticle(article);
+  card.onkeydown = e => {
+    if (e.key === "Enter") openArticle(article);
+  };
+  return card;
+}
+
+function render() {
+  const filtered = articles.filter(article => {
+    const matchesCategory =
+      selectedCategory === "Tümü" ||
+      selectedCategory === article.category;
+
+    const text = [
+      article.title,article.description,article.category
+    ].join(" ").toLocaleLowerCase("tr-TR");
+
+    return matchesCategory && text.includes(searchTerm);
+  });
+
+  const featured = $("featured");
+  const cards = $("cards");
+
+  featured.replaceChildren();
+  cards.replaceChildren();
+
+  filtered.slice(0,2).forEach(a =>
+    featured.append(makeCard(a,true))
+  );
+
+  filtered.slice(2).forEach(a =>
+    cards.append(makeCard(a,false))
+  );
+
+  if (!filtered.length) {
+    cards.append(node("p","",
+      "Bu kategoride henüz haber bulunamadı."
+    ));
+  }
+}
+
+const categoryBar = $("categories");
+
+categories.forEach(category => {
+  const button = node("button","",category);
+
+  button.onclick = () => {
+    selectedCategory = category;
+    categoryBar.querySelectorAll("button")
+      .forEach(b => b.classList.remove("active"));
+    button.classList.add("active");
+    render();
+  };
+
+  if (category === "Tümü") button.classList.add("active");
+  categoryBar.append(button);
+});
+
+$("themeButton").onclick = () =>
+  document.body.classList.toggle("dark");
+
+$("searchButton").onclick = () => {
+  $("search").hidden = !$("search").hidden;
+  if (!$("search").hidden) $("search").focus();
+};
+
+$("search").oninput = e => {
+  searchTerm = e.target.value.toLocaleLowerCase("tr-TR");
+  render();
+};
+
+async function loadNews() {
+  try {
+    const response = await fetch(API_URL);
+
+    if (!response.ok) {
+      throw new Error("API " + response.status);
+    }
+
+    const data = await response.json();
+
+    const items = Array.isArray(data.news)
+      ? data.news
+      : (Array.isArray(data.articles) ? data.articles : null);
+
+    if (!items) {
+      throw new Error("Beklenmeyen veri biçimi");
+    }
+
+    const categoryNames = {
+      turkiye: "Türkiye",
+      "türkiye": "Türkiye",
+      dunya: "Dünya",
+      "dünya": "Dünya",
+      ekonomi: "Ekonomi",
+      siyaset: "Siyaset",
+      gundem: "Türkiye",
+      gündem: "Türkiye",
+      sondakika: "Türkiye",
+      afet: "Afet",
+      bilim: "Bilim",
+      teknoloji: "Teknoloji",
+      finans: "Finans",
+      yasam: "Yaşam",
+      "yaşam": "Yaşam",
+      spor: "Spor"
+    };
+
+    articles = items.map((item, index) => ({
+      ...item,
+      id: item.id || item.link || item.url || (item.title + "-" + index),
+      url: item.url || item.link || "#",
+      publishedAt: item.publishedAt || item.pubDate || null,
+      category: categoryNames[String(item.category || "").toLocaleLowerCase("tr-TR")]
+        || item.category || "Türkiye",
+      description: item.description || "",
+      image: item.image || "",
+      source: item.source || "RSS"
+    }));
+
+    $("status").textContent =
+      articles.length + " haber · " +
+      (data.source || "RSS") +
+      " · Son kontrol: " + formatDate(data.updatedAt);
+
+    render();
+  } catch (error) {
+    $("status").textContent =
+      "Haber akışına ulaşılamadı: " + error.message;
+  }
+}
+
+loadNews();
+setInterval(loadNews,30 * 60 * 1000);
+</script>
+</body>
+</html>
