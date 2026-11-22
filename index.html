@@ -427,11 +427,28 @@ async function loadNews() {
 
     const data = await response.json();
 
-    if (!Array.isArray(data.articles)) {
-      throw new Error("Beklenmeyen veri biçimi");
-    }
+  if (!Array.isArray(data.news)) {
+  throw new Error("Beklenmeyen veri biçimi");
+}
 
-    articles = data.articles;
+articles = data.news.map(item => ({
+  ...item,
+  id: item.id || item.link,
+  url: item.url || item.link,
+  publishedAt: item.publishedAt || item.pubDate,
+  category: ({
+    turkiye: "Türkiye",
+    dunya: "Dünya",
+    ekonomi: "Ekonomi",
+    teknoloji: "Teknoloji",
+    finans: "Finans",
+    spor: "Spor",
+    afet: "Afet",
+    yasam: "Yaşam",
+    siyaset: "Siyaset",
+    sondakika: "Türkiye"
+  })[item.category] || item.category || "Türkiye"
+}));
 
     $("status").textContent =
       articles.length + " haber · " +
